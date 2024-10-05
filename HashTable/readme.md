@@ -1,4 +1,4 @@
-# Hash table challenge
+# Hash Table Challenge
 
 This challenge requires the dev to create a hash table to
 fulfill the requirements of program.c 
