@@ -1,4 +1,4 @@
-#Quick sort challenge#
+# Quick sort challenge
 
 This challenge requires the dev to create an integer quicksort
 function to fulfill the requirements of program.c 
