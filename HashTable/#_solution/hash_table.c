@@ -7,13 +7,11 @@
 struct node *hash_table[HASH_TABLE_SIZE] = {NULL};
 
 static int hash(char *content){
-  int current_value = 0;
-  for(int i = 0; i < (int)strlen(content); i++){
-    current_value += content[i];
-    current_value *= 17;
-    current_value %= HASH_TABLE_SIZE;
+  int i, value = 0;
+  for(i = 0; i < (int)strlen(content); i++){
+    value = ((value + content[i]) * 17) % HASH_TABLE_SIZE;
   }
-  return current_value;
+  return value;
 }
 
 void add_item(char *content){
@@ -22,29 +20,23 @@ void add_item(char *content){
   new_node = find_item(content);
   if (new_node != NULL)
     return;
-  else{
-    new_node = malloc(sizeof(struct node));
-    if(new_node == NULL){
-      printf("Unable to allocate memory for new node in hash table\n");
-      exit(EXIT_FAILURE);
-    }
-    new_node->content = malloc(strlen(content) + 1);
-    if (new_node->content == NULL){
-      printf("Unable to allocate memory for content in hash table\n");
-      free(new_node);
-      exit(EXIT_FAILURE);
-    }
-    strcpy(new_node->content, content);
-    new_node->next = NULL;
-
-    int id = hash(content);
-    for (cur = hash_table[id], prev = NULL; cur != NULL; prev = cur, cur = cur->next);
-
-    if(prev == NULL)
-      hash_table[id] = new_node;
-    else
-      prev->next = new_node;
+  
+  new_node = malloc(sizeof(struct node));
+  if(new_node == NULL){
+    printf("Unable to allocate memory for new node in hash table\n");
+    exit(EXIT_FAILURE);
   }
+  new_node->content = malloc(strlen(content) + 1);
+  if (new_node->content == NULL){
+    printf("Unable to allocate memory for content in hash table\n");
+    free(new_node);
+    exit(EXIT_FAILURE);
+  }
+  strcpy(new_node->content, content);
+
+  int id = hash(content);
+  new_node->next = hash_table[id];
+  hash_table[id] = new_node;
 }
 
 struct node *find_item(char *content){
@@ -60,7 +52,7 @@ void remove_item(char *content){
   struct node *cur, *prev;
 
   int id = hash(content);
-  for (cur = hash_table[id], prev = NULL; cur != NULL && strcmp(cur->content, content) != 0; prev = cur, cur = cur->next);
+  for (cur = hash_table[id], prev = NULL; cur != NULL && strcmp(cur->content, content); prev = cur, cur = cur->next);
 
   if(cur == NULL)
     return;
